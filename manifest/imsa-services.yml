@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: imsa-services
+    version: v1
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/instance: imsa-services
+    app.kubernetes.io/part-of: imsa-services-app
+    app.openshift.io/runtime: quarkus
+  annotations:
+    app.openshift.io/vcs-ref: main
+    app.openshift.io/vcs-uri: 'https://github.com/mouachan/imsa-services'
+  name: imsa-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imsa-services
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: imsa-services
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/scheme: "http"
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - image: quay.io/mouachan/imsa-services:1.0.0-SNAPSHOT
+          imagePullPolicy: Always
+          name: imsa-services
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 8778
+              name: jolokia
+              protocol: TCP
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value:  "my-cluster-kafka-bootstrap:9092"  
+          readinessProbe:
+            httpGet:
+              path: "q/health/ready"
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet:
+              path: "q/health/live"
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+          securityContext:
+            privileged: false
+#      imagePullSecrets:
+#        - name: quay-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: imsa-services
+  labels:
+    app: imsa-services
+spec:
+  ports:
+    - name: http
+      port: 8080
+  selector:
+    app: imsa-services
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: imsa-services
+  name: imsa-services
+spec:
+  port:
+    targetPort: http
+  to:
+    kind: Service
+    name: imsa-services
+    weight: 100
+  tls:
+    termination: edge
+  wildcardPolicy: None
