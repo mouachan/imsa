@@ -41,11 +41,17 @@ public class TacheResource {
     @Channel("msaReq")
     Emitter<String> msaReqRequestEmitter;
 
-    @Channel("initt1")
-    Emitter<String> initt1RequestEmitter;
+    @Channel("initt1OK")
+    Emitter<String> initt1OKRequestEmitter;
 
-    @Channel("initt2")
-    Emitter<String> initt2RequestEmitter;
+
+    @Channel("initt1KO")
+    Emitter<String> initt1KORequestEmitter;
+
+    @Channel("initt2OK")
+    Emitter<String> initt2OKRequestEmitter;
+    @Channel("initt2KO")
+    Emitter<String> initt2KORequestEmitter;
 
     @POST
     @Path("/tache")
@@ -56,7 +62,7 @@ public class TacheResource {
         
         JsonObject json = new JsonObject()
                                     .put("specversion", CloudEventMetadata.CE_VERSION_1_0)
-                                    .put("type", "start")
+                                    .put("type", "msaReq")
                                     .put("id", "12345")
                                     .put("source", "/tache")
                                     .put("subject", "generated task")
@@ -101,8 +107,8 @@ public class TacheResource {
 
 
 
-    @GET
-    @Path("/event/t1/event/{numsecu}/init")
+    @POST
+    @Path("/event/t1/{numsecu}/init")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response initt1Event(String id, @PathParam("numsecu") String  numsecu) {
@@ -113,20 +119,22 @@ public class TacheResource {
         .put("specversion", CloudEventMetadata.CE_VERSION_1_0)
         .put("type", "initt1OK")
         .put("id", id)
-        .put("source", "/event/t1/event/{numsecu}/init")
+        .put("source", "/event/t1/{numsecu}/init")
         .put("datacontenttype", "application/json")
         .put("time", "2020-07-23T09:12:34Z")
         .put("data",  numsecu+"-t1")
         .put("kogitoprocrefid", id)
-        .put("kogitoprocid","imsa_process")
+        .put("kogitoprocid","imsaProcess")
         .put("kogitoprocinstanceid",id);
 
-        initt1RequestEmitter.send(json.encode());
+        initt1OKRequestEmitter.send(json.encode());
+        LOGGER.infof("Cloudevent %s produced into the topic initt1",json.encode() );
+
         return Response.ok(numsecu+"-t1").build();
     }
 
        
-    @GET
+    @POST
     @Path("/event/t2/{numsecu}/init")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -136,19 +144,21 @@ public class TacheResource {
         .put("specversion", CloudEventMetadata.CE_VERSION_1_0)
         .put("type", "initt1OK")
         .put("id", id)
-        .put("source", "/event/t2/event/{numsecu}/init")
+        .put("source", "/event/t2/{numsecu}/init")
         .put("datacontenttype", "application/json")
         .put("time", "2020-07-23T09:12:34Z")
         .put("data",  numsecu+"-t2")
         .put("kogitoprocrefid", id)
-        .put("kogitoprocid","imsa_process")
+        .put("kogitoprocid","imsaProcess")
         .put("kogitoprocinstanceid",id);
-        LOGGER.infof("num secu recu %s", numsecu);
+
+        initt2OKRequestEmitter.send(json.encode());
+        LOGGER.infof("Cloudevent %s produced into the topic initt2",json.encode() );   
         return Response.ok(numsecu+"-t2").build();
     }
 
        
-    @GET
+    @POST
     @Path("/event/t3/{numsecu}/init")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

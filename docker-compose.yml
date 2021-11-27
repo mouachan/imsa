@@ -131,7 +131,7 @@ services:
       infinispan:
         condition: service_healthy
     volumes:
-      - ./imsa-process-kogito/target/classes/META-INF/resources/persistence/protobuf/:/home/kogito/data/protobufs/
+      - ./docker-compose/protobufs/:/home/kogito/data/protobufs/
     environment:
       QUARKUS_INFINISPAN_CLIENT_SERVER_LIST: infinispan:11222
       QUARKUS_INFINISPAN_CLIENT_USE_AUTH: "false"

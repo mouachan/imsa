@@ -1,0 +1,59 @@
+syntax = "proto2"; 
+package fr.msa.imsaProcess; 
+import "kogito-index.proto";
+import "kogito-types.proto";
+option kogito_model = "ImsaProcess";
+option kogito_id = "imsaProcess";
+
+/* @Indexed */ 
+message Dossier { 
+	option java_package = "fr.msa.imsa.model";
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField */ 
+	optional string numsecu = 1; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField */ 
+	optional string typeDemarrage = 2; 
+}
+/* @Indexed */ 
+message ImsaProcess { 
+	option java_package = "fr.msa";
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional bool controleDossier = 1; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional bool controleNotif = 2; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional Dossier dossier = 3; 
+	/* @Field(index = Index.YES, store = Store.YES) @SortableField */ 
+	optional string id = 4; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional string initt1 = 5; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional string initt2 = 6; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional string initt3 = 7; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional bool newNotif = 8; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional string notif = 9; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional string numsecu = 10; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional string processInstanceId = 11; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional string result = 12; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField
+ @VariableInfo(tags="") */ 
+	optional string typeDemarrage = 13; 
+	/* @Field(index = Index.NO, store = Store.YES) @SortableField */ 
+	optional org.kie.kogito.index.model.KogitoMetadata metadata = 14; 
+}
